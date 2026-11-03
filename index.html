@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#b5522b">
+<title>Рецепти</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+:root{--bg:#faf8f5;--fg:#222;--mut:#6b6b6b;--card:#fff;--line:#e5e0d8;--acc:#b5522b;--warn:#fff1d6;--ok:#2e7d32}
+@media (prefers-color-scheme:dark){:root{--bg:#1b1a19;--fg:#eee;--mut:#a0a0a0;--card:#262422;--line:#3a3734;--acc:#e08a5f;--warn:#4a3a1a;--ok:#7bc47f}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:19px/1.55 system-ui,sans-serif;padding-bottom:84px}
+header{position:sticky;top:0;background:var(--bg);padding:10px 12px 8px;border-bottom:1px solid var(--line);z-index:3}
+.row{display:flex;gap:8px;align-items:center}
+input[type=search],select{font:inherit;font-size:18px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--fg);min-width:0}
+input[type=search]{flex:1}
+select{width:100%;margin-top:8px}
+.ib{font:inherit;font-size:22px;line-height:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--fg);cursor:pointer}
+#count{font-size:15px;color:var(--mut);margin-top:6px}
+main{padding:12px;max-width:760px;margin:0 auto}
+.list{display:flex;flex-direction:column;gap:10px}
+.item{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;min-height:84px}
+.item img,.item .ph{width:96px;height:84px;object-fit:cover;flex:none;background:var(--line)}
+.item .w{padding:8px 10px 8px 0;min-width:0}
+.item .t{font-weight:600;font-size:18px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.item .s{font-size:14px;color:var(--mut);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.more{display:block;width:100%;margin:14px 0}
+.btn{font:inherit;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;color:var(--fg);cursor:pointer;text-align:center;text-decoration:none;display:inline-block}
+.btn.main{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+.btn:disabled{opacity:.5}
+.hero{width:100%;max-height:55vh;object-fit:contain;border-radius:12px;background:var(--line);display:block}
+h1{font-size:26px;line-height:1.25;margin:14px 0 6px}
+.meta{color:var(--mut);font-size:16px}
+h2{font-size:20px;margin:24px 0 8px;color:var(--acc)}
+ul{padding-left:22px;margin:4px 0}
+li{margin:6px 0}
+.amt{font-weight:700;white-space:nowrap}
+.step{margin:12px 0}
+.step b{display:block}
+.note{white-space:pre-wrap}
+.tbl{overflow-x:auto;margin:4px 0 8px;border:1px solid var(--line);border-radius:10px}
+.tbl table{border-collapse:collapse;width:100%;font-size:17px}
+.tbl th,.tbl td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+.tbl th{background:var(--card);color:var(--mut);font-weight:600;font-size:14px;text-align:right}
+.tbl td.num{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.tbl td:first-child,.tbl th:first-child{position:sticky;left:0;background:var(--bg);white-space:normal;min-width:120px}
+.tbl tr.tot td{font-weight:700;border-top:2px solid var(--fg)}
+.tbl tr:last-child td{border-bottom:0}
+.pics{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.pics img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:var(--line);cursor:zoom-in;display:block}
+a{color:var(--acc)}
+a.shots{margin:8px 0 6px}
+.links a{word-break:break-word}
+.bottom{position:fixed;left:0;right:0;bottom:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--line);display:flex;gap:10px;z-index:3}
+.bottom .btn{flex:1;font-size:18px}
+#upd{display:none;background:var(--warn);border-bottom:1px solid var(--acc);padding:10px 12px;font-size:17px}
+#upd.on{display:flex;gap:10px;align-items:center;justify-content:space-between}
+#lb{position:fixed;inset:0;background:#000;z-index:9;display:none;overflow:auto;touch-action:pinch-zoom}
+#lb.on{display:block}
+#lb img{width:100%;min-height:100%;object-fit:contain;display:block}
+#lb .x{position:fixed;top:10px;right:10px;font-size:24px;background:rgba(0,0,0,.6);color:#fff;border:1px solid #888;border-radius:12px;padding:8px 14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:10px 0}
+.bar i{display:block;height:100%;background:var(--acc);width:0}
+.empty{text-align:center;color:var(--mut);padding:40px 0}
+</style>
+</head>
+<body>
+<div id="upd"><span>Є оновлення</span><button class="btn main" id="updBtn">Оновити</button></div>
+<header id="hdr">
+  <div class="row">
+    <input type="search" id="q" placeholder="Пошук: назва, інгредієнт…" autocomplete="off">
+    <button class="ib" id="menuBtn" title="Офлайн і оновлення" aria-label="Офлайн і оновлення">⋮</button>
+  </div>
+  <select id="sec"><option value="">Усі розділи</option></select>
+  <div id="count">Завантажую…</div>
+</header>
+<main id="main"></main>
+<div class="bottom" id="bottom" hidden></div>
+<div id="lb"><button class="x" onclick="history.back()">✕</button><img id="lbImg" alt=""></div>
+<script>
+// Read-only phone viewer. Data: recipes.json (generated by tools\build_phone.py in allrecipes_v2).
+let DATA = null, R = [], BYID = {}, FILES = new Map(), list = [], shown = 0, listScroll = 0;
+const PAGE = 60;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const arr = v => Array.isArray(v) ? v : (v ? [v] : []);
+const ORDER = {'Хліб пшеничний':1,'Хліб житній і житньо-пшеничний':2,'Дрібноштучні вироби':3,'Піца':4,'Фокача і пласкі хліби':5,'Здоба і десерти':6,'Печиво':6.5,'Листкове тісто':7,'Пироги і пиріжки':8,'Домашня кухня':9,'Основи і довідка':10,'Нерозподілене':11};
+const encPath = rel => rel.split('/').map(encodeURIComponent).join('/');
+// Canonical file URL "<path>?v=<hash>" — the same key the service worker caches under.
+const fileUrl = p => encPath(p) + (FILES.get(p) ? '?v=' + FILES.get(p).h : '');
+const absUrl = p => new URL(fileUrl(p), location.href.split('#')[0]).href;
+const MB = n => (n / 1048576).toFixed(n < 10485760 ? 1 : 0);
+
+// ---------- data ----------
+function load(d){
+  DATA = d; R = d.recipes; BYID = {}; FILES = new Map(d.files.map(([p, s, h]) => [p, { s, h }]));
+  for (const r of R) {
+    BYID[r.id] = r;
+    r._s = [r.title, r.title_original, ...arr(r.ingredient_groups).flatMap(g => arr(g.items).map(i => i.name))].join(' ').toLowerCase();
+    r._sec = [r.section || r.board || '—', ...arr(r.also_in).map(a => a.section)];
+  }
+  const secs = [...new Set(R.flatMap(r => r._sec))].sort((a, b) => (ORDER[a] || 99) - (ORDER[b] || 99) || a.localeCompare(b));
+  const keep = $('sec').value;
+  $('sec').innerHTML = '<option value="">Усі розділи</option>' + secs.map(s => `<option>${esc(s)}</option>`).join('');
+  $('sec').value = secs.includes(keep) ? keep : '';
+  route();
+}
+
+// ---------- list ----------
+function filterList(){
+  const q = $('q').value.trim().toLowerCase(), s = $('sec').value;
+  list = R.filter(r => (!s || r._sec.includes(s)) && (!q || q.split(/\s+/).every(w => r._s.includes(w))));
+  list.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'uk'));
+}
+const itemHtml = r => `<a class="item" href="#r/${encodeURIComponent(r.id)}">
+  ${r.thumb ? `<img loading="lazy" src="${fileUrl(r.thumb)}" alt="">` : '<div class="ph"></div>'}
+  <div class="w"><div class="t">${esc(r.title || '(без назви)')}</div><div class="s">${esc(r.subsection || r.section || r.board || '')}</div></div></a>`;
+function renderList(keepScroll){
+  setBottom('');
+  filterList();
+  shown = Math.min(Math.max(shown, PAGE), list.length);
+  if (!keepScroll) shown = Math.min(PAGE, list.length);
+  $('count').textContent = `Знайдено: ${list.length} з ${R.length}`;
+  $('main').innerHTML = list.length
+    ? `<div class="list" id="lst">${list.slice(0, shown).map(itemHtml).join('')}</div>` + (shown < list.length ? `<button class="btn more" id="moreBtn">Показати ще (${list.length - shown})</button>` : '')
+    : '<div class="empty">Нічого не знайдено</div>';
+  const mb = $('moreBtn'); if (mb) mb.onclick = more;
+  scrollTo(0, keepScroll ? listScroll : 0);
+}
+function more(){
+  const n = Math.min(shown + PAGE, list.length);
+  $('lst').insertAdjacentHTML('beforeend', list.slice(shown, n).map(itemHtml).join(''));
+  shown = n;
+  const mb = $('moreBtn');
+  if (shown >= list.length) mb.remove(); else mb.textContent = `Показати ще (${list.length - shown})`;
+}
+
+// ---------- recipe ----------
+function tableOf(g){
+  const all = arr(g.items);
+  if (all.length < 2 || all.some(it => !it || typeof it !== 'object')) return '';
+  const SPL = /\s+\/\s+/;
+  const rows = all.map(it => String(it.amount || '').split(SPL));
+  const n = rows[0].length;
+  if (n < 2 || rows.some(x => x.length !== n)) return '';
+  const name = String(g.name || '').replace(/^\s*Таблица\s*—\s*/i, '');
+  const hp = name.split(SPL);
+  let title = name, heads = rows[0].map((_, i) => i + 1);
+  if (hp.length === n) {
+    const c = hp[0].indexOf(':');
+    title = c > 0 ? hp[0].slice(0, c).trim() : hp[0];
+    heads = [c > 0 ? hp[0].slice(c + 1).trim() : hp[0], ...hp.slice(1)];
+  }
+  return `<h2>${esc(title || 'Інгредієнти')}</h2><div class="tbl"><table>
+    <thead><tr><th></th>${heads.map(x => `<th>${esc(x)}</th>`).join('')}</tr></thead>
+    <tbody>${all.map((it, i) => `<tr class="${/^(итого|всего|разом)/i.test(it.name || '') ? 'tot' : ''}"><td>${esc(it.name)}</td>${rows[i].map(v => `<td class="num">${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody>
+  </table></div>`;
+}
+function renderIngr(r){
+  return arr(r.ingredient_groups).map(g => tableOf(g) || `<h2>${esc(g.name || 'Інгредієнти')}</h2><ul>` + arr(g.items).map(it =>
+    `<li>${esc(it.name)}${it.amount ? ` — <span class="amt">${esc(it.amount)}</span>` : ''}</li>`).join('') + '</ul>').join('');
+}
+function renderSteps(r){
+  const s = arr(r.steps);
+  if (!s.length) return '';
+  return '<h2>Приготування</h2>' + s.map(st => `<div class="step">${st.name ? `<b>${esc(st.name)}</b>` : ''}${esc(st.text)}</div>`).join('');
+}
+const ytId = u => (String(u || '').match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([\w-]{11})/) || [])[1] || '';
+const pic = p => `<img loading="lazy" src="${fileUrl(p)}" alt="" data-lb="${esc(p)}">`;
+function renderOne(id){
+  const r = BYID[id]; if (!r) return renderList();
+  const meta = [r.section, r.subsection, r.yield, r.difficulty ? 'складність ' + r.difficulty + '/5' : ''].filter(Boolean).map(esc).join(' · ');
+  const isPdf = p => /\.pdf$/i.test(p);
+  const pages = arr(r.pages).filter(p => p !== r.photo);
+  const photos = arr(r.photos).filter(p => p !== r.photo && !pages.includes(p));
+  const stepPhotos = arr(r.links).map(l => l.url || '').find(u => /(^|\/)breakdown\.html$/i.test(u)) || '';
+  const vids = [...new Set([r.video_url, ...arr(r.videos).map(v => v.video_url)].filter(Boolean))];
+  const vIds = new Set(vids.map(ytId).filter(Boolean));
+  const links = arr(r.links).filter(l => !/(^|\/)breakdown\.html$/i.test(l.url || '') && !vIds.has(ytId(l.url)));
+  const pdfs = pages.filter(isPdf), pagePics = pages.filter(p => !isPdf(p));
+  $('count').textContent = '';
+  $('main').innerHTML = `
+    ${r.photo ? `<img class="hero" src="${fileUrl(r.photo)}" alt="" data-lb="${esc(r.photo)}">` : ''}
+    <h1>${esc(r.title || '(без назви)')}</h1>
+    ${stepPhotos ? `<a class="btn main shots" href="${fileUrl(stepPhotos)}">📷 Покрокові фото</a>` : ''}
+    ${r.title_original && r.title_original !== r.title ? `<div class="meta">${esc(r.title_original)}</div>` : ''}
+    ${meta ? `<div class="meta">${meta}</div>` : ''}
+    ${r.board ? `<div class="meta">Джерело: ${esc(r.board)}${r.category ? ' → ' + esc(r.category) : ''}</div>` : ''}
+    ${vids.map(u => `<p><a class="btn" href="${esc(u)}" target="_blank" rel="noopener">▶ Відео на YouTube</a></p>`).join('')}
+    ${r.bake ? `<h2>Випікання</h2><div>${esc(r.bake)}</div>` : ''}
+    ${renderIngr(r)}
+    ${renderSteps(r)}
+    ${r.notes ? `<h2>Примітки</h2><div class="note">${esc(r.notes)}</div>` : ''}
+    ${photos.length ? '<h2>Фото</h2><div class="pics">' + photos.map(pic).join('') + '</div>' : ''}
+    ${pagePics.length ? '<h2>Сторінки / оригінал</h2><div class="pics">' + pagePics.map(pic).join('') + '</div>' : ''}
+    ${pdfs.length ? '<h2>PDF</h2><ul>' + pdfs.map(p => `<li><a href="${fileUrl(p)}">${esc(p.split('/').pop())}</a> <span class="meta">(${MB((FILES.get(p) || {}).s || 0)} МБ)</span></li>`).join('') + '</ul>' : ''}
+    ${arr(r.references).length ? '<h2>Посилання в книзі</h2><ul>' + arr(r.references).map(x => `<li>${esc(x)}</li>`).join('') + '</ul>' : ''}
+    ${links.length || stepPhotos ? '<h2>Посилання</h2><ul class="links">' + (stepPhotos ? `<li><a href="${fileUrl(stepPhotos)}">Покрокові фото</a></li>` : '') + links.map(l => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.title || l.url)}</a></li>`).join('') + '</ul>' : ''}
+  `;
+  setBottom('<button class="btn main" onclick="goList()">← До списку</button><button class="btn" onclick="scrollTo(0,0)">↑ Вгору</button>');
+  scrollTo(0, 0);
+}
+function setBottom(h){ $('bottom').innerHTML = h; $('bottom').hidden = !h; }
+function goList(){ if (history.state && history.state.fromList) history.back(); else location.hash = ''; }
+
+// ---------- picture viewer ----------
+function openLb(p){
+  $('lbImg').src = fileUrl(p); $('lb').classList.add('on');
+  history.pushState({ lb: 1, fromList: history.state && history.state.fromList }, '');
+}
+window.addEventListener('popstate', () => $('lb').classList.remove('on'));
+
+// ---------- offline / update page ----------
+let dl = null;
+async function cachedInfo(){
+  let n = 0, size = 0;
+  if (!('caches' in window)) return { n, size };
+  const c = await caches.open('files');
+  const keys = new Set((await c.keys()).map(k => k.url));
+  for (const [p, f] of FILES) if (keys.has(absUrl(p))) { n++; size += f.s; }
+  return { n, size };
+}
+async function usageLine(){
+  const total = [...FILES.values()].reduce((a, f) => a + f.s, 0);
+  const ci = await cachedInfo();
+  let used = '';
+  if (navigator.storage && navigator.storage.estimate) {
+    const e = await navigator.storage.estimate();
+    used = ` Зайнято на телефоні: ${MB(e.usage || 0)} МБ.`;
+  }
+  return `Збережено для офлайн: ${ci.n} з ${FILES.size} файлів (${MB(ci.size)} з ${MB(total)} МБ).${used}`;
+}
+async function renderMenu(){
+  setBottom('<button class="btn main" onclick="goList()">← До списку</button>');
+  $('count').textContent = '';
+  const sw = 'serviceWorker' in navigator && navigator.serviceWorker.controller;
+  $('main').innerHTML = `
+    <h1>Офлайн і оновлення</h1>
+    <div class="box">
+      <div id="use">Рахую…</div>
+      <div class="bar"><i id="pbar"></i></div>
+      <div id="prog" class="meta"></div>
+      <p><button class="btn main" id="dlBtn">Завантажити все для офлайн</button>
+      <button class="btn" id="stopBtn" hidden>Зупинити</button></p>
+      <div class="meta">Фото, які ви вже відкривали, зберігаються самі. Ця кнопка зберігає всі одразу — краще через Wi-Fi.${sw ? '' : '<br>⚠ Офлайн-режим ще не готовий: перезапустіть застосунок з інтернетом.'}</div>
+    </div>
+    <div class="box">
+      <div>Рецептів: ${R.length}. Версія бази: ${esc(DATA.version)} (${esc(DATA.built)}).</div>
+      <p><button class="btn" id="chkBtn">Перевірити оновлення</button> <span id="chk" class="meta"></span></p>
+    </div>
+    <div class="box meta">Тільки перегляд. Рецепти додаються на комп'ютері; щоб оновити сайт, на комп'ютері запустіть publish_phone.bat.</div>`;
+  $('dlBtn').onclick = downloadAll;
+  $('stopBtn').onclick = () => { if (dl) dl.stop = true; };
+  $('chkBtn').onclick = async () => { $('chk').textContent = 'Перевіряю…'; const s = await checkUpdate(); $('chk').textContent = s; };
+  if (dl) showProgress();
+  $('use').textContent = await usageLine();
+}
+function showProgress(){
+  if (!dl || !$('prog')) return;
+  $('pbar').style.width = (dl.total ? 100 * dl.doneBytes / dl.total : 100) + '%';
+  $('prog').textContent = `${dl.done} з ${dl.count} файлів · ${MB(dl.doneBytes)} з ${MB(dl.total)} МБ` + (dl.err ? ` · помилок: ${dl.err}` : '');
+  $('dlBtn').disabled = !dl.end; $('stopBtn').hidden = !!dl.end;
+}
+async function downloadAll(){
+  if (!('caches' in window)) { alert('Цей браузер не підтримує офлайн-збереження.'); return; }
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+  const c = await caches.open('files');
+  const have = new Set((await c.keys()).map(k => k.url));
+  const todo = [...FILES].filter(([p]) => !have.has(absUrl(p)));
+  dl = { count: todo.length, done: 0, total: todo.reduce((a, [, f]) => a + f.s, 0), doneBytes: 0, err: 0, stop: false, end: false };
+  showProgress();
+  let i = 0;
+  const worker = async () => {
+    while (i < todo.length && !dl.stop) {
+      const [p, f] = todo[i++];
+      try {
+        const key = absUrl(p);
+        const r = await fetch(key, { cache: 'no-store' });
+        if (!r.ok) throw new Error(r.status);
+        if (!(await c.match(key))) await c.put(key, r);
+        dl.done++; dl.doneBytes += f.s;
+      } catch (e) { dl.err++; }
+      showProgress();
+    }
+  };
+  await Promise.all([1, 2, 3, 4, 5, 6].map(worker));
+  dl.end = true; showProgress();
+  if ($('prog')) $('prog').textContent += dl.stop ? ' · зупинено' : (dl.err ? ' · частину не вдалося — натисніть ще раз' : ' · готово ✓');
+  if ($('use')) $('use').textContent = await usageLine();
+}
+
+// ---------- updates ----------
+let NEWDATA = null, REG = null;
+async function checkUpdate(){
+  if (!navigator.onLine) return 'Немає інтернету.';
+  try {
+    if (REG) await REG.update().catch(() => {});
+    const txt = await fetch('recipes.json?check=' + Date.now(), { cache: 'no-store' }).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
+    const nd = JSON.parse(txt);
+    if (nd.version !== DATA.version || (REG && REG.waiting)) { NEWDATA = { d: nd, txt }; $('upd').classList.add('on'); return 'Є оновлення — натисніть «Оновити» вгорі.'; }
+    return 'Оновлень немає.';
+  } catch (e) { return 'Не вдалося перевірити: ' + e.message; }
+}
+async function applyUpdate(){
+  $('updBtn').disabled = true; $('updBtn').textContent = 'Оновлюю…';
+  try {
+    if (NEWDATA && 'caches' in window) {
+      const base = location.href.split('#')[0].replace(/[^/]*$/, '');
+      await (await caches.open('data')).put(base + 'recipes.json', new Response(NEWDATA.txt, { headers: { 'Content-Type': 'application/json' } }));
+      // remove cached files that are not in the new version (removed recipes / changed pictures)
+      const keep = new Set(NEWDATA.d.files.map(([p, , h]) => new URL(encPath(p) + '?v=' + h, base).href));
+      const c = await caches.open('files');
+      for (const k of await c.keys()) if (!keep.has(k.url)) await c.delete(k);
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage('reload-map');
+    }
+    if (REG && REG.waiting) {
+      navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
+      REG.waiting.postMessage('skip-waiting');
+      return;
+    }
+  } catch (e) { alert('Не вдалося оновити: ' + e.message); }
+  location.reload();
+}
+
+// ---------- wiring ----------
+function route(){
+  if (!DATA) return;
+  $('lb').classList.remove('on');
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (h.startsWith('r/')) return renderOne(h.slice(2));
+  if (h === 'menu') return renderMenu();
+  renderList(true);
+}
+window.addEventListener('hashchange', route);
+document.addEventListener('click', e => {
+  const im = e.target.closest && e.target.closest('img[data-lb]');
+  if (im) return openLb(im.dataset.lb);
+  const a = e.target.closest && e.target.closest('a.item');
+  if (a) { e.preventDefault(); listScroll = scrollY; history.pushState({ fromList: 1 }, '', a.getAttribute('href')); route(); }
+});
+const refresh = () => { if (location.hash) history.replaceState(null, '', location.pathname); renderList(false); };
+$('q').addEventListener('input', refresh);
+$('sec').addEventListener('change', refresh);
+$('menuBtn').onclick = () => { location.hash = 'menu'; };
+$('updBtn').onclick = applyUpdate;
+
+fetch('recipes.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
+  load(d);
+  setTimeout(checkUpdate, 1500);
+}).catch(e => { $('main').innerHTML = `<div class="empty">Не вдалося завантажити рецепти (${esc(e.message)}).<br>Відкрийте застосунок з інтернетом хоча б раз.</div>`; });
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').then(reg => {
+    REG = reg;
+    if (reg.waiting && navigator.serviceWorker.controller) $('upd').classList.add('on');
+    reg.addEventListener('updatefound', () => {
+      const w = reg.installing;
+      w && w.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) $('upd').classList.add('on'); });
+    });
+  }).catch(() => {});
+}
+</script>
+</body>
+</html>
