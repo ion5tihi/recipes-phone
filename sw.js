@@ -1,6 +1,6 @@
 // Service worker of the phone copy. Generated into recipes-phone by tools\build_phone.py
-// (76360e9d51 = hash of index.html + manifest + icons, so a new shell installs a new worker).
-const SHELL = 'shell-76360e9d51';
+// (4b24817943 = hash of index.html + manifest + icons, so a new shell installs a new worker).
+const SHELL = 'shell-4b24817943';
 const DATA = 'data';    // recipes.json (replaced only when the user taps "оновити")
 const FILES = 'files';  // pictures, PDFs, breakdown pages: key = canonical URL "<path>?v=<hash>"
 const SCOPE = new URL(self.registration.scope);
